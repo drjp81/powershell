@@ -1,0 +1,6 @@
+powershell.txt
+getpowershell.sh
+debug.log
+docker-compose.yml
+build.ps1
+.vscode/**
