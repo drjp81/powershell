@@ -1,10 +1,11 @@
 FROM  --platform=$BUILDPLATFORM drjp81/powershell AS dloader
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+# ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 ENV DEBIAN_FRONTEND=noninteractive
 ARG BUILDPLATFORM
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ENV COMPlus_EnableDiagnostics=0
+apy-get update && apt-get install -y libicu74
 
 RUN echo "I'm building for $TARGETARCH"
 
