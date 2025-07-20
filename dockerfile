@@ -5,7 +5,6 @@ ARG BUILDPLATFORM
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ENV COMPlus_EnableDiagnostics=0
-RUN apt  update && apt  install -y libicu74
 
 RUN echo "I'm building for $TARGETARCH"
 
@@ -20,7 +19,8 @@ RUN echo "I'm building for $TARGETARCH"
 COPY --from=dloader /dload/powershellurl.txt ./powershellurl.txt
 ENV DEBIAN_FRONTEND=noninteractive
 ENV COMPlus_EnableDiagnostics=0
-RUN apt update -y ;apt install -y unrar wget
+
+RUN apt update -y ;apt install -y unrar wget  libicu74
 RUN wget $(cat ./powershellurl.txt) -O /tmp/powershell.tar.gz
 # Create the target folder where powershell will be placed
 RUN mkdir -p /opt/microsoft/powershell/7
