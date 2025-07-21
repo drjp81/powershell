@@ -25,4 +25,6 @@ jobs:
     -
       name: Build Module
       shell: pwsh
+      env:
+        GH_AUTH_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
       run: ./dockerjobs.ps1
