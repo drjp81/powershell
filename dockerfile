@@ -20,7 +20,7 @@ COPY --from=dloader /dload/powershellurl.txt ./powershellurl.txt
 ENV DEBIAN_FRONTEND=noninteractive
 ENV COMPlus_EnableDiagnostics=0
 
-RUN apt update -y ;apt install -y unrar wget  libicu74
+RUN apt update -y ;apt install -y unrar wget libicu74 
 RUN wget $(cat ./powershellurl.txt) -O /tmp/powershell.tar.gz
 # Create the target folder where powershell will be placed
 RUN mkdir -p /opt/microsoft/powershell/7
@@ -33,4 +33,4 @@ RUN chmod +x /opt/microsoft/powershell/7/pwsh
 # Create the symbolic link that points to pwsh
 RUN ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh 
 RUN chmod +x /usr/bin/pwsh
-
+RUN apt upgrade -y && apt autoremove && apt clean
