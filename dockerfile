@@ -33,4 +33,4 @@ RUN chmod +x /opt/microsoft/powershell/7/pwsh
 # Create the symbolic link that points to pwsh
 RUN ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh 
 RUN chmod +x /usr/bin/pwsh
-
+RUN apt upgrade -y && apt autoremove && apt clean
