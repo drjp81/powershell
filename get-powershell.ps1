@@ -1,27 +1,36 @@
-switch ($env:TARGETARCH) { 
-    "amd64" { $token = "x64" } 
-    "arm" { $token = "arm32" } 
-    default { $token = $env:TARGETARCH } 
-} 
-Get-ChildItem env:
-start-sleep -Seconds 5
-#if (!$token) { $token = "x64" }
-Write-Host "Downloading PowerShell Core $token"
-#Start-Sleep -Seconds 5
-$vers = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/PowerShell/releases/latest" -ContentType -application/json -Headers $headers
-#$vers
-$headers = @{
-    Authorization = "Bearer $env:GH_AUTH_TOKEN"
-    'User-Agent'  = 'github-actions'
+#Requires -Version 7.0
+$ErrorActionPreference = 'Stop'
+
+# Map Docker TARGETARCH to PowerShell release naming
+$arch = switch ($env:TARGETARCH) {
+    'amd64' { 'x64'   }
+    'arm'   { 'arm32' }
+    default { $env:TARGETARCH }
 }
-$url = ($vers | Where-Object {$_.prerelease -eq $false }).assets.browser_download_url | Where-Object {$_ -like "*linux-$token.tar.gz"} | Select-Object -First 1
-write-host ("Setting download to:" + $url)
-if ($null -eq $url )
-{ write-host "No PowerShell Core $token release found" 
-exit -1}
-else {
-    mkdir /dload -p
-    Set-Content -path /dload/powershellurl.txt -Value $url
-    exit 0
+
+Write-Host "Resolving latest PowerShell release for arch: $arch"
+
+$headers = @{ 'User-Agent' = 'github-actions' }
+if ($env:GH_AUTH_TOKEN) {
+    $headers['Authorization'] = "Bearer $env:GH_AUTH_TOKEN"
 }
+
+$release = Invoke-RestMethod `
+    -Uri         'https://api.github.com/repos/PowerShell/PowerShell/releases/latest' `
+    -ContentType 'application/json' `
+    -Headers     $headers
+
+$url = $release.assets.browser_download_url |
+    Where-Object { $_ -like "*linux-$arch.tar.gz" } |
+    Select-Object -First 1
+
+if (-not $url) {
+    Write-Error "No PowerShell release asset found for arch: $arch"
+    exit 1
+}
+
+Write-Host "Download URL: $url"
+New-Item -ItemType Directory -Path /dload -Force | Out-Null
+Set-Content -Path /dload/powershellurl.txt -Value $url
+exit 0
 
