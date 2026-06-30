@@ -20,7 +20,7 @@ COPY --from=dloader /dload/powershellurl.txt ./powershellurl.txt
 ENV DEBIAN_FRONTEND=noninteractive
 ENV COMPlus_EnableDiagnostics=0
 
-RUN apt update -y ;apt upgrade -y; apt install -y wget  libicu74
+RUN apt update -y ;apt upgrade -y; apt install -y wget libicu-dev
 RUN wget $(cat ./powershellurl.txt) -O /tmp/powershell.tar.gz
 # Create the target folder where powershell will be placed
 RUN mkdir -p /opt/microsoft/powershell/7
