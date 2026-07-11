@@ -1,11 +1,10 @@
-#Requires -Version 7.0
+
 [CmdletBinding()]
 param(
     [string]  $BuilderName = 'cibuilder',
     [string]  $Image       = 'drjp81/powershell:latest',
     [string]  $Platforms   = 'linux/amd64,linux/arm64,linux/arm/v7',
-    [string]  $Dockerfile  = 'dockerfile',
-    [switch]  $NoPush
+    [string]  $Dockerfile  = 'dockerfile'
 )
 
 Set-StrictMode -Version Latest
@@ -39,10 +38,11 @@ $buildArgs = @(
     "--platform=$Platforms",
     '-f', $Dockerfile,
     '-t', $Image,
-    '--progress=plain'
+    '--push',  # This is required for multi-arch builds to work properly
+    '--progress=plain',
+    '.'
 )
-if (-not $NoPush) { $buildArgs += '--push' }
-$buildArgs += '.'
+
 
 docker @buildArgs
 if ($LASTEXITCODE -ne 0) { throw "docker buildx build failed (exit $LASTEXITCODE)." }
